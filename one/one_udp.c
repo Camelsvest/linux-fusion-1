@@ -161,7 +161,7 @@ ksocket_send_iov( struct socket      *sock,
                   const struct iovec *iov,
                   size_t              iov_count )
 {
-     struct msghdr msg;
+     struct msghdr msg = { addr, sizeof *addr };
      mm_segment_t oldfs;
      int size = 0;
      size_t len = 0;
@@ -178,18 +178,20 @@ ksocket_send_iov( struct socket      *sock,
      for (i=0; i<iov_count; i++)
           len += iov[i].iov_len;
 
-     msg.msg_flags = 0;
-     msg.msg_name = addr;
-     msg.msg_namelen  = sizeof(struct sockaddr_in);
-     msg.msg_control = NULL;
-     msg.msg_controllen = 0;
+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,19,0) // commit c0371da6047a
      msg.msg_iov = (struct iovec*) iov;
      msg.msg_iovlen = iov_count;
-     msg.msg_control = NULL;
+#else
+     iov_iter_init(&msg.msg_iter, WRITE, iov, iov_count, len);
+#endif
 
      oldfs = get_fs();
      set_fs(KERNEL_DS);
-     size = sock_sendmsg(sock,&msg,len);
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4,1,0) // commit d8725c86aeba
+     size = sock_sendmsg(sock, &msg, len);
+#else
+     size = sock_sendmsg(sock, &msg);
+#endif
      set_fs(oldfs);
 
      return size;
@@ -198,7 +200,7 @@ ksocket_send_iov( struct socket      *sock,
 static int
 ksocket_receive(struct socket* sock, struct sockaddr_in* addr, void *buf, int len)
 {
-     struct msghdr msg;
+     struct msghdr msg = { addr, sizeof *addr };
      struct iovec iov;
      mm_segment_t oldfs;
      int size = 0;
@@ -213,18 +215,20 @@ ksocket_receive(struct socket* sock, struct sockaddr_in* addr, void *buf, int le
      iov.iov_base = buf;
      iov.iov_len = len;
 
-     msg.msg_flags = 0;
-     msg.msg_name = addr;
-     msg.msg_namelen  = sizeof(struct sockaddr_in);
-     msg.msg_control = NULL;
-     msg.msg_controllen = 0;
+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,19,0) // commit c0371da6047a
      msg.msg_iov = &iov;
      msg.msg_iovlen = 1;
-     msg.msg_control = NULL;
+#else
+     iov_iter_init(&msg.msg_iter, READ, &iov, 1, len);
+#endif
 
      oldfs = get_fs();
      set_fs(KERNEL_DS);
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4,7,0) // commit 2da62906b1e29
      size = sock_recvmsg(sock,&msg,len,msg.msg_flags);
+#else
+     size = sock_recvmsg(sock, &msg,msg.msg_flags);
+#endif
      set_fs(oldfs);
 
      return size;
