@@ -62,10 +62,10 @@ ifeq ($(shell test -e $(KERNEL_BUILD)/include/linux/config.h && echo yes),yes)
   CPPFLAGS += -DHAVE_LINUX_CONFIG_H
 endif
 
-ifeq ($(K_VERSION),3)
-  KMAKEFILE = Makefile-2.6
-else
+ifeq ($(K_VERSION),2)
   KMAKEFILE = Makefile-2.$(K_PATCHLEVEL)
+else
+  KMAKEFILE = Makefile-2.6
 endif
 
 check-version = $(shell expr \( $(K_VERSION) \* 65536 + $(K_PATCHLEVEL) \* 256 + $(K_SUBLEVEL) \) \>= \( $(1) \* 65536 + $(2) \* 256 + $(3) \))
