@@ -925,7 +925,7 @@ fusionee_kill(FusionDev * dev,
                if (f != fusionee && (!target || target == f->id)) {
                     struct task_struct *p;
 
-#if defined(CONFIG_TREE_RCU) || defined(CONFIG_TREE_PREEMPT_RCU) || defined(CONFIG_TINY_RCU) || defined(rcu_read_lock)
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,0)
                     rcu_read_lock();
 #else
                     read_lock(&tasklist_lock);
@@ -946,7 +946,7 @@ fusionee_kill(FusionDev * dev,
                          }
                     }
 
-#if defined(CONFIG_TREE_RCU) || defined(CONFIG_TREE_PREEMPT_RCU) || defined(CONFIG_TINY_RCU) || defined(rcu_read_unlock)
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,0)
                     rcu_read_unlock();
 #else
                     read_unlock(&tasklist_lock);
