@@ -775,7 +775,7 @@ call_ioctl(FusionDev * dev, Fusionee * fusionee,
                               printk( KERN_ERR "fusion: FUSION_CALL_EXECUTE3 with errorneous call (failed on previous ioctl call), "
                                                "call id %d, flags 0x%08x, arg %d, length %u, serial %u,  %ld\n",
                                       execute3.call_id, execute3.flags, execute3.call_arg, execute3.length, execute3.ret_length,
-                                      (execute3_bin - (FusionCallExecute3 *) arg) );
+                                      (long int)(execute3_bin - (FusionCallExecute3 *) arg) );
                               return -EIO;
                          }
 
