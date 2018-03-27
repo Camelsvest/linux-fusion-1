@@ -22,7 +22,7 @@
 #include <linux/version.h>
 #include <linux/uio.h>
 
-#include <asm/uaccess.h>
+#include <linux/uaccess.h>
 
 #include <linux/one.h>
 

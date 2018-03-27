@@ -22,6 +22,10 @@
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 35)
 #include <linux/smp_lock.h>
 #endif
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 11, 0)
+#include <linux/sched/signal.h>
+#endif
+
 #include <linux/sched.h>
 #include <linux/time.h>
 #include <linux/version.h>

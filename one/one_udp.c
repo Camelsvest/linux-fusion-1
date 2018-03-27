@@ -25,6 +25,13 @@
 
 #include <linux/kthread.h>
 
+#include <linux/sched/types.h>
+
+#include <linux/version.h>
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 11, 0)
+#include <linux/sched/signal.h>
+#endif
+
 #include "onecore.h"
 #include "onecore_impl.h"
 #include "one_udp.h"
