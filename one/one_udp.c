@@ -25,11 +25,11 @@
 
 #include <linux/kthread.h>
 
-#include <linux/sched/types.h>
+#include <linux/types.h>
 
 #include <linux/version.h>
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 11, 0)
-#include <linux/sched/signal.h>
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 4, 0)
+#include <linux/signal.h>
 #endif
 
 #include "onecore.h"
@@ -231,7 +231,7 @@ ksocket_receive(struct socket* sock, struct sockaddr_in* addr, void *buf, int le
 
      oldfs = get_fs();
      set_fs(KERNEL_DS);
-#if LINUX_VERSION_CODE < KERNEL_VERSION(4,7,0) // commit 2da62906b1e29
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4,4,0)
      size = sock_recvmsg(sock,&msg,len,msg.msg_flags);
 #else
      size = sock_recvmsg(sock, &msg,msg.msg_flags);
